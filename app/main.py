@@ -3,6 +3,7 @@ from app.bot.create_bot import dp, start_bot, bot, stop_bot
 from app.config import settings
 from aiogram.types import Update
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from loguru import logger
 
 
@@ -22,6 +23,24 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/open-happ", response_class=HTMLResponse)
+async def open_happ(link: str):
+    """Редирект-страница для открытия happ:// deep link из Telegram-кнопки."""
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Открытие Happ VPN...</title>
+  <script>window.location.href = "{link}";</script>
+</head>
+<body>
+  <p>Открываем Happ VPN...</p>
+  <p>Если приложение не открылось, <a href="{link}">нажмите здесь</a>.</p>
+</body>
+</html>"""
 
 
 @app.post("/webhook")

@@ -6,3 +6,11 @@ class SUser(BaseModel):
     username: str | None
     first_name: str | None
     last_name: str | None
+
+
+class SUserFilter(BaseModel):
+    id: int
+
+
+class SUserUpdateSubscription(BaseModel):
+    subscription_url: str

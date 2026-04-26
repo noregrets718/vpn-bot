@@ -13,10 +13,18 @@ class Settings(BaseSettings):
     LOG_ROTATION: str = "10 MB"
     DB_URL: str
 
-
     BASE_URL: str
-
     VHOST: str
+
+    REMNAWAVE_URL: str
+    REMNAWAVE_API_TOKEN: str
+    REMNAWAVE_EXPIRE_DAYS: int = 365
+    # UUID'ы Internal Squad'ов через запятую: uuid1,uuid2
+    REMNAWAVE_SQUAD_IDS: str = ""
+
+    @property
+    def squad_ids(self) -> list[str]:
+        return [s.strip() for s in self.REMNAWAVE_SQUAD_IDS.split(",") if s.strip()]
 
 
     @property
