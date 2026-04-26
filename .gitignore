@@ -233,3 +233,4 @@ cli.py/
 
 # pytest
 report.xml
+/.claude
