@@ -21,6 +21,17 @@ def _headers() -> dict:
     return {"Authorization": f"Bearer {settings.REMNAWAVE_API_TOKEN}"}
 
 
+async def is_subscription_valid(subscription_url: str) -> bool:
+    """Проверяет, возвращает ли subscription URL корректный ответ (не 404)."""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.head(subscription_url)
+            return resp.status_code not in (404, 400)
+    except Exception as e:
+        logger.warning(f"Subscription URL validation failed: {e}")
+        return False
+
+
 async def get_or_create_subscription(
     telegram_id: int,
     telegram_username: str | None = None,

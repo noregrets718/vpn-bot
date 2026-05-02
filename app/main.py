@@ -7,7 +7,6 @@ from fastapi.responses import HTMLResponse
 from loguru import logger
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Бот запущен...")
@@ -41,6 +40,7 @@ async def open_happ(link: str):
   <p>Если приложение не открылось, <a href="{link}">нажмите здесь</a>.</p>
 </body>
 </html>"""
+
 
 
 @app.post("/webhook")

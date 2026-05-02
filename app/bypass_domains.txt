@@ -1,0 +1,42 @@
+# Домены для прямого подключения (без VPN)
+# По одному домену на строку, строки с # игнорируются
+
+# Банки
+sberbank.ru
+sberbankonline.ru
+online.sberbank.ru
+alfabank.ru
+tinkoff.ru
+vtb.ru
+raiffeisen.ru
+gazprombank.ru
+rshb.ru
+
+# Госсервисы
+gosuslugi.ru
+nalog.ru
+mos.ru
+pfr.gov.ru
+fss.ru
+customs.gov.ru
+
+# Соцсети и медиа
+vk.com
+vkontakte.ru
+ok.ru
+odnoklassniki.ru
+rutube.ru
+mail.ru
+my.mail.ru
+
+# Поисковики и сервисы
+yandex.ru
+yandex.net
+yandex.com
+ya.ru
+dzen.ru
+
+# Маркетплейсы
+ozon.ru
+wildberries.ru
+avito.ru

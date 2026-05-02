@@ -8,8 +8,9 @@ from loguru import logger
 
 from app.bot.user.kbs import main_user_kb, download_kb, connect_kb
 from app.bot.user.schemas import SUser, SUserFilter, SUserUpdateSubscription
+from app.config import settings
 from app.dao.dao import UserDAO
-from app.services.remnawave import get_or_create_subscription
+from app.services.remnawave import get_or_create_subscription, is_subscription_valid
 from app.utils.happ import make_happ_link
 
 router = Router()
@@ -47,10 +48,18 @@ async def handle_connect(
     await callback.answer()
     user = callback.from_user
     user_id = user.id
+    dao = UserDAO(session_with_commit)
 
-    # Проверяем кешированный subscription_url в нашей БД
-    user_record = await UserDAO(session_with_commit).find_one_or_none_by_id(user_id)
+    user_record = await dao.find_one_or_none_by_id(user_id)
     subscription_url = user_record.subscription_url if user_record else None
+
+    if subscription_url and not await is_subscription_valid(subscription_url):
+        logger.warning(f"Stale subscription_url for user {user_id}, clearing cache")
+        await dao.update(
+            filters=SUserFilter(id=user_id),
+            values=SUserUpdateSubscription(subscription_url=None),
+        )
+        subscription_url = None
 
     if not subscription_url:
         wait_msg = await callback.message.answer("Создаём ваш VPN-профиль, подождите...")
@@ -59,7 +68,7 @@ async def handle_connect(
                 telegram_id=user_id,
                 telegram_username=user.username,
             )
-            await UserDAO(session_with_commit).update(
+            await dao.update(
                 filters=SUserFilter(id=user_id),
                 values=SUserUpdateSubscription(subscription_url=subscription_url),
             )
@@ -72,17 +81,15 @@ async def handle_connect(
             return
         await wait_msg.delete()
 
-    # Получаем зашифрованный happ:// deep link
     happ_link = await make_happ_link(subscription_url)
 
     if happ_link:
         await callback.message.answer(
             "Ваш VPN-профиль готов!\n\n"
-            "Нажмите кнопку ниже, чтобы открыть конфиг в приложении Happ:",
+            "Используйте кнопки ниже для подключения и настройки маршрутизации:",
             reply_markup=connect_kb(happ_link),
         )
     else:
-        # Fallback: subscription URL напрямую
         await callback.message.answer(
             "Ваш VPN-профиль готов!\n\n"
             f"Ссылка для подключения:\n<code>{subscription_url}</code>\n\n"
@@ -96,7 +103,7 @@ async def handle_copy_sub_url(callback: CallbackQuery, session_without_commit: A
     if user_record and user_record.subscription_url:
         await callback.answer()
         await callback.message.answer(
-            f"Ссылка на подписку:\n<code>{user_record.subscription_url}</code>"
+            f"Ссылка для подключения:\n<code>{user_record.subscription_url}</code>"
         )
     else:
         await callback.answer("Подписка не найдена", show_alert=True)

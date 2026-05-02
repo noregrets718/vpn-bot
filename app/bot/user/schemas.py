@@ -13,4 +13,4 @@ class SUserFilter(BaseModel):
 
 
 class SUserUpdateSubscription(BaseModel):
-    subscription_url: str
+    subscription_url: str | None

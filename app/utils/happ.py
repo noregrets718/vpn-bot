@@ -4,7 +4,7 @@ from loguru import logger
 _CRYPTO_API_URL = "https://crypto.happ.su/api-v2.php"
 
 
-async def make_happ_link(subscription_url: str) -> str | None:
+async def  make_happ_link(subscription_url: str) -> str | None:
     """
     Шифрует subscription URL через Happ Crypto API.
     Возвращает happ://crypt5/... ссылку или None при ошибке.
