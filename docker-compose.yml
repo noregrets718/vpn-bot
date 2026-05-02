@@ -5,8 +5,15 @@ services:
     container_name: app
     env_file: .env
     restart: always
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
+    environment:
+      - VIRTUAL_HOST=vpn.noregretsdevelop.ru
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=vpn.noregretsdevelop.ru
+    networks:
+      - default
+      - nginx-proxy-network
     depends_on:
       postgresql:
         condition: service_healthy
@@ -26,7 +33,7 @@ services:
     image: postgres:15-alpine3.20
     container_name: postgresql
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -38,6 +45,11 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+
+networks:
+  nginx-proxy-network:
+    name: nginx-proxy-network
+    external: true
 
 volumes:
   postgres_data:
