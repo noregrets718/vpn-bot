@@ -27,7 +27,7 @@ def make_routing_deeplink() -> str:
 
     profile = {
         "Name": "RU Bypass",
-        "GlobalProxy": "false",
+        "GlobalProxy": "true",
         "UseChunkFiles": "true",
         "RemoteDNSType": "DoH",
         "RemoteDNSDomain": "https://8.8.8.8/dns-query",
